@@ -38,7 +38,7 @@ class CreateNoteAsyncTask extends AsyncTask<String, Void, Note> {
 
     protected Note doInBackground(String... urls) {
         try {
-            final String url = "http://192.168.0.25:8080/rest/addNote/";
+            final String url = Config.restUrl + "rest/addNote/";
             RestTemplate restTemplate = new RestTemplate();
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)

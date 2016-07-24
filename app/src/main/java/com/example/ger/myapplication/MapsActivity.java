@@ -40,6 +40,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestPermissions(PERMS, INITIAL_REQUEST);
+
+        Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
+        Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
+
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

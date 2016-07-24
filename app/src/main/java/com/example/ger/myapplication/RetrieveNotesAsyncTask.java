@@ -24,7 +24,7 @@ class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
 
     protected Note[] doInBackground(String... urls) {
         try {
-            final String url = "http://192.168.0.25:8080/rest/getAllNotes";
+            final String url = Config.restUrl + "rest/getAllNotes";
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Note[] notes = restTemplate.getForObject(url, Note[].class);
