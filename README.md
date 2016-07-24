@@ -11,7 +11,16 @@ Open as a gradle application in Android Studio
 
 Add a config.properties file to app/res/raw
 
-###config.properties (rest_url should point at wherever your GeoShareBackend is running. rest_key is not in use yet):
+###config.properties
 ```xml
+#this should point at wherever your GeoShareBackend is running
 rest_url=http://localhost:8080/
+
+#use this instead of localhost if using android emulator
+#rest_url=http://10.0.2.2:8080/
+
+#use your local pc ip if debugging on your phone with local backend
+#rest_url=http://192.X.X.X:8080/
+
+#rest_key is not in use yet
 rest_key=123456
