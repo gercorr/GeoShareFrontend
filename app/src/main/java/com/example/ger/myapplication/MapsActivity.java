@@ -7,6 +7,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,10 +28,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Button mSaveButton;
+    private EditText mText;
+
+
     private LocationManager mLocationManager;
     private OnCameraChangeListener mCameraManager;
 
     private final float minZoom = 17.0f;
+    private final float initialZoom = 19.0f;
     private static final int INITIAL_REQUEST=1337;
     private LatLng lastLatLng;
     private Marker userMarker;
@@ -44,11 +53,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
         Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
 
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.custom_ui);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        mSaveButton = (Button)findViewById(R.id.button);
+        mText   = (EditText)findViewById(R.id.editText);
+        mSaveButton.setOnClickListener(mOnButtonClickListener);
+
+
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -92,23 +108,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lastLatLng = newLatLng;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(minZoom));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
         mMap.setOnMapLongClickListener(mOnMapLongClickListener);
 
-        CircleOptions circleOptions = new CircleOptions()
-                .center(lastLatLng)
-                .radius(2)
-                .strokeColor(Color.BLACK)
-                .fillColor(Color.WHITE);
         MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));//.rotation(90);
         userMarker = mMap.addMarker(markerOptions);
     }
+
+    private final View.OnClickListener mOnButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view)
+        {
+            String text = mText.getText().toString();
+            if(text != null && !text.isEmpty())
+                new CreateNoteAsyncTask(mMap, lastLatLng, text).execute();
+            mText.setText("");
+
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    };
 
     private final OnMapLongClickListener mOnMapLongClickListener = new OnMapLongClickListener() {
 
         @Override
         public void onMapLongClick(LatLng latLng) {
-            new CreateNoteAsyncTask(mMap, latLng).execute();
+            //new CreateNoteAsyncTask(mMap, latLng).execute();
         }
     };
 
