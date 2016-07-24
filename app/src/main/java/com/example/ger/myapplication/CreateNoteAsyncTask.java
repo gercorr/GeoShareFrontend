@@ -25,8 +25,8 @@ class CreateNoteAsyncTask extends AsyncTask<String, Void, Note> {
 
         note = new Note( );
         note.setText(text);
-        note.setLatitude((float)latLng.latitude);
-        note.setLongitude((float)latLng.longitude);
+        note.setLatitude(latLng.latitude);
+        note.setLongitude(latLng.longitude);
 
     }
 

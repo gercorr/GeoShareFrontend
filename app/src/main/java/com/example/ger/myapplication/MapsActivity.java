@@ -144,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onCameraChange(CameraPosition cameraPosition)
         {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLng));
-            if (cameraPosition.zoom < minZoom)
+            if (cameraPosition.zoom < minZoom && !android.os.Debug.isDebuggerConnected())
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(minZoom));
 
         }
