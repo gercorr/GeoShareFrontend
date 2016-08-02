@@ -6,4 +6,5 @@ package com.example.ger.myapplication;
 public class Config {
     public static String restUrl;
     public static String restKey;
+    public static String distanceToRetrieve;
 }

@@ -1,15 +1,25 @@
 package com.example.ger.myapplication;
 
-import org.junit.Test;
+import junit.framework.Assert;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+    public void float_comparrison_isCorrect() throws Exception {
+
+        double distanceToRefresh = Double.parseDouble("0.02")/2;
+
+        double lastSearchLat = 53.38738589;
+        double lastLatMinusDist = lastSearchLat - distanceToRefresh;
+        double lastLatPlusDist = lastSearchLat + distanceToRefresh;
+
+        if(lastSearchLat < lastLatMinusDist || lastSearchLat > lastLatPlusDist)
+        {
+            Assert.fail();
+        }
     }
 }

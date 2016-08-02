@@ -1,7 +1,6 @@
 package com.example.ger.myapplication;
 
 import android.Manifest;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,14 +19,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+
     private GoogleMap mMap;
+    private ArrayList<Marker> mMarkers = new ArrayList<Marker>();
     private Button mSaveButton;
     private EditText mText;
 
@@ -39,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final float initialZoom = 19.0f;
     private static final int INITIAL_REQUEST=1337;
     private LatLng lastLatLng;
+    private LatLng lastSearchLatLng;
     private Marker userMarker;
 
     private static final String[] PERMS={
@@ -52,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
         Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
+        Config.distanceToRetrieve = ConfigHelper.getConfigValue(this, "distanceToRetrieve");
 
         setContentView(R.layout.custom_ui);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -96,7 +100,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnCameraChangeListener(mCameraListener);
 
-        new RetrieveNotesAsyncTask(mMap).execute();
 
         //mMap.setIndoorEnabled(true);
         mMap.setBuildingsEnabled(true);
@@ -106,6 +109,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng newLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         lastLatLng = newLatLng;
+
+        lastSearchLatLng = lastLatLng;
+        new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
@@ -161,8 +167,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
             userMarker.setPosition(lastLatLng);
+
+
+            if(needToRefreshMap()) {
+                lastSearchLatLng = lastLatLng;
+                new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
+            }
+
         }
 
+        //simple box check rather than distance (faster)
+        private boolean needToRefreshMap()
+        {
+            if(lastSearchLatLng == null || lastLatLng == null)
+                return true;
+
+            double distanceToRefresh = Double.parseDouble(Config.distanceToRetrieve)/2; //it it halved to get the distanceToRefresh. It will then refrest to the full distance
+
+            //getting weird issues with double comparison after decimal places so just multiplied by 1000
+            double lastSearchLat = lastSearchLatLng.latitude *1000;
+            double lastLatMinusDist = (lastLatLng.latitude - distanceToRefresh) *1000;
+            double lastLatPlusDist = (lastLatLng.latitude + distanceToRefresh) *1000;
+
+            //if latitude is outside box
+            if(lastSearchLat < lastLatMinusDist || lastSearchLat > lastLatPlusDist)
+            {
+                double lastSearchLong = lastSearchLatLng.longitude *1000;
+                double lastLongMinusDist = (lastLatLng.longitude - distanceToRefresh) *1000;
+                double lastLongPlusDist = (lastLatLng.longitude + distanceToRefresh) *1000;
+                //if longitude is outside box
+                if(lastSearchLong < lastLongMinusDist || lastSearchLong > lastLongPlusDist)
+                {
+                    return true;
+                }
+            }
+
+
+            return false;
+        }
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
