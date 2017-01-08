@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,9 +31,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private GoogleMap mMap;
+    private SupportMapFragment mMapFragment;
     private ArrayList<Marker> mMarkers = new ArrayList<Marker>();
     private Button mSaveButton;
+    private Button mStartButton;
     private EditText mText;
+    private ImageView mSplash;
+    private ProgressBar mProgressBar;
 
 
     private LocationManager mLocationManager;
@@ -59,14 +65,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setContentView(R.layout.custom_ui);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mMapFragment.getMapAsync(this);
+        mMapFragment.getView().setVisibility(View.GONE);
 
 
         mSaveButton = (Button)findViewById(R.id.button);
+        mStartButton = (Button)findViewById(R.id.button2);
         mText   = (EditText)findViewById(R.id.editText);
+        mSplash = (ImageView)findViewById(R.id.splash);
         mSaveButton.setOnClickListener(mOnButtonClickListener);
+        mStartButton.setOnClickListener(mOnStartButtonClickListener);
+        mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
+        //mProgressBar.setVisibility(View.INVISIBLE);
 
 
 
@@ -133,6 +145,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    };
+
+    private final View.OnClickListener mOnStartButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view)
+        {
+            mStartButton.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+
+            View[] viewsToDisplay = new View[]{mMapFragment.getView(), mSaveButton, mText};
+            View[] viewsToHide = new View[]{mSplash, mProgressBar};
+
+            try {
+                new TestNotesAsyncTask(viewsToDisplay, viewsToHide).execute();
+            }
+            catch (Exception e)
+            {
+                //gotta do something here
+            }
+    }
     };
 
     private final OnMapLongClickListener mOnMapLongClickListener = new OnMapLongClickListener() {
