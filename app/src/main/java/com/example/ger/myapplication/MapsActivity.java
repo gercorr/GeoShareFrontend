@@ -1,6 +1,5 @@
 package com.example.ger.myapplication;
 
-import android.Manifest;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -33,7 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
-    private ArrayList<Marker> mMarkers = new ArrayList<Marker>();
+    private ArrayList<Marker> mMarkers = new ArrayList<>();
     private FloatingActionButton mAddButton;
     private FloatingActionButton mSendButton;
     private CustomEditText mText;
@@ -42,23 +41,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private LocationManager mLocationManager;
-    private OnCameraChangeListener mCameraManager;
 
     private final float minZoom = 17.0f;
     private final float initialZoom = 19.0f;
-    private static final int INITIAL_REQUEST=1337;
     private LatLng lastLatLng;
     private LatLng lastSearchLatLng;
     private Marker userMarker;
 
-    private static final String[] PERMS={
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestPermissions(PERMS, INITIAL_REQUEST);
 
         Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
         Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
@@ -72,30 +65,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMapFragment.getView().setVisibility(View.GONE);
 
 
-        mAddButton = (FloatingActionButton)findViewById(R.id.fab);
-        mSendButton = (FloatingActionButton)findViewById(R.id.fab2);
-        mText   = (CustomEditText)findViewById(R.id.editText);
-        mSplash = (ImageView)findViewById(R.id.splash);
+        mAddButton = (FloatingActionButton) findViewById(R.id.fab);
+        mSendButton = (FloatingActionButton) findViewById(R.id.fab2);
+        mText = (CustomEditText) findViewById(R.id.editText);
+        mSplash = (ImageView) findViewById(R.id.splash);
         mAddButton.setOnClickListener(mOnAddButtonClickListener);
         mSendButton.setOnClickListener(mOnSendButtonClickListener);
         mText.setButtonRefs(mAddButton, mSendButton);
-        mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
-        //mProgressBar.setVisibility(View.INVISIBLE);
-
-
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         prepareApp();
-
     }
 
     @Override
     public void onResume(){
         super.onResume();
         prepareApp();
-
     }
 
     private void prepareApp()
@@ -281,4 +269,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     };
+
 }
