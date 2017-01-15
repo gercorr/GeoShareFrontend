@@ -13,9 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            tools:context="com.example.ger.myapplication.MapsActivity" />
+            tools:context="com.logicalpanda.geoshare.activities.MapsActivity" />
 
-        <com.example.ger.myapplication.CustomEditText
+        <com.logicalpanda.geoshare.other.CustomEditText
             android:id="@+id/editText"
             android:inputType="textMultiLine"
             android:lines="8"

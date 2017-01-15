@@ -1,8 +1,10 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.config;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+
+import com.logicalpanda.geoshare.R;
 
 import java.io.IOException;
 import java.io.InputStream;

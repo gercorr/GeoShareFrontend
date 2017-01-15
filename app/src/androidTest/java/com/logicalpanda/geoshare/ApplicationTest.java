@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

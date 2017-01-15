@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,7 +14,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.logicalpanda.geoshare.R;
 import com.google.android.gms.iid.InstanceID;
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.config.ConfigHelper;
+import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
+import com.logicalpanda.geoshare.pojos.User;
+import com.logicalpanda.geoshare.rest.TestNotesAsyncTask;
 
 public class StartupActivity extends AppCompatActivity implements IHandleTestNotesPostExecute {
 
@@ -94,7 +100,7 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
 
     private Boolean attemptRequestPermission()
     {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (permissionGranted == false || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, PERMS, PERMISSIONS_REQUEST_ID);
             return false;
@@ -111,6 +117,10 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionGranted = true;
+                    if(attemptSetNickname())
+                    {
+                        startMap();
+                    }
                 }
             }
         }

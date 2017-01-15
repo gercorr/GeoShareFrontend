@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.activities;
 
 import android.content.Context;
 import android.location.Location;
@@ -13,6 +13,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.config.ConfigHelper;
+import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
+import com.logicalpanda.geoshare.other.CustomEditText;
+import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
+import com.logicalpanda.geoshare.R;
+import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
+import com.logicalpanda.geoshare.rest.TestNotesAsyncTask;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;

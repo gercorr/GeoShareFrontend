@@ -1,7 +1,9 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.rest;
 
 import android.os.AsyncTask;
 
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.pojos.Note;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Ger on 18/07/2016.
  */
-class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
+public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
 
     private Exception exception;
     private final GoogleMap mMap;

@@ -1,6 +1,10 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.rest;
 
 import android.os.AsyncTask;
+
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
+import com.logicalpanda.geoshare.pojos.Note;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -9,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * Created by Ger on 08/01/2017.
  */
-class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
+public class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
 
     private Exception exception;
     private IHandleTestNotesPostExecute mCallingActivity;

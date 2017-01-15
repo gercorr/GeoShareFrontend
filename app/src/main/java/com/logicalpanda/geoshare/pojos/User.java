@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.pojos;
 
 public class User {
 

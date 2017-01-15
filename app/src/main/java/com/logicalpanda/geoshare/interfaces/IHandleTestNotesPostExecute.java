@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.interfaces;
 
 /**
  * Created by Ger on 14/01/2017.

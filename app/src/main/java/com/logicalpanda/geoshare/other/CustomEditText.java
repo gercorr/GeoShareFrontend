@@ -1,4 +1,4 @@
-package com.example.ger.myapplication;
+package com.logicalpanda.geoshare.other;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
