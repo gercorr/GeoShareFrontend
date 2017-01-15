@@ -1,7 +1,6 @@
 package com.example.ger.myapplication;
 
 import android.os.AsyncTask;
-import android.view.View;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -13,14 +12,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
 
     private Exception exception;
-    private View[] mViewsToDisplay;
-    private View[] mViewsToHide;
+    private IHandleTestNotesPostExecute mCallingActivity;
 
 
-    public TestNotesAsyncTask(View[] viewsToDisplay, View[] viewsToHide)
+    public TestNotesAsyncTask(IHandleTestNotesPostExecute callingActivity)
     {
-        mViewsToDisplay = viewsToDisplay;
-        mViewsToHide = viewsToHide;
+        mCallingActivity = callingActivity;
     }
 
     protected Note doInBackground(String... urls) {
@@ -43,12 +40,6 @@ class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
     }
 
     protected void onPostExecute(Note feed) {
-
-        for (View viewToDisplay : mViewsToDisplay) {
-            viewToDisplay.setVisibility(View.VISIBLE);
-        }
-        for (View viewToHide : mViewsToHide) {
-            viewToHide.setVisibility(View.GONE);
-        }
+        mCallingActivity.onTestNotesPostExecute();
     }
 }

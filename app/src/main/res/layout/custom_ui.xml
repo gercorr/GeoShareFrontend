@@ -27,30 +27,12 @@
             android:background="#ffffff"
             android:scrollbars="vertical"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:paddingRight="70dp"
             android:paddingBottom="50dp"
             android:visibility="gone"
             />
-
-        <!--
-                <com.example.ger.myapplication.CustomEditText
-            android:layout_marginBottom="35dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:background="#ffffff"
-            android:layout_alignBottom="@+id/fab2"
-            android:layout_toLeftOf="@+id/fab2"
-            android:layout_alignTop="@+id/fab2"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:elevation="5dp"
-            android:visibility="gone"
-            />
-            -->
-
-
 
         <FrameLayout
             android:layout_width="100dp"
@@ -100,7 +82,8 @@
             android:visibility="gone"
             android:layout_alignTop="@+id/editText"
             android:tint="@color/colorText"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
 
 
     </RelativeLayout>

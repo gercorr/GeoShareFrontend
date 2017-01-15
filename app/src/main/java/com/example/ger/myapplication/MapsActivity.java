@@ -15,19 +15,17 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, IHandleTestNotesPostExecute {
 
 
     private GoogleMap mMap;
@@ -53,6 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //TODO: Move this somewhere else and instantiate it automatically
         Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
         Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
         Config.distanceToRetrieve = ConfigHelper.getConfigValue(this, "distanceToRetrieve");
@@ -75,9 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        prepareApp();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
@@ -90,11 +87,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         mProgressBar.setVisibility(View.VISIBLE);
 
-        View[] viewsToDisplay = new View[]{mMapFragment.getView(), mAddButton};
-        View[] viewsToHide = new View[]{mSplash, mProgressBar};
-
         try {
-            new TestNotesAsyncTask(viewsToDisplay, viewsToHide).execute();
+            new TestNotesAsyncTask(this).execute();
         }
         catch (Exception e)
         {
@@ -125,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
                 (float) 0.01, mLocationListener);
 
-        mMap.setOnCameraChangeListener(mCameraListener);
+        mMap.setOnCameraMoveListener(mCameraListener);
 
 
         //mMap.setIndoorEnabled(true);
@@ -143,7 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
         mMap.setOnMapLongClickListener(mOnMapLongClickListener);
-
+        mMap.setMinZoomPreference(minZoom);
         MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));//.rotation(90);
         userMarker = mMap.addMarker(markerOptions);
     }
@@ -172,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void SendInputFromTextBox()
     {
         String text = mText.getText().toString();
-        if(text != null && !text.isEmpty())
+        if(!text.isEmpty())
             new CreateNoteAsyncTask(mMap, lastLatLng, text).execute();
         mText.setText("");
 
@@ -193,15 +187,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     };
 
 
-    private final OnCameraChangeListener mCameraListener = new OnCameraChangeListener() {
+
+    private final GoogleMap.OnCameraMoveListener mCameraListener = new GoogleMap.OnCameraMoveListener() {
 
         @Override
-        public void onCameraChange(CameraPosition cameraPosition)
+        public void onCameraMove()
         {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLng));
-            if (cameraPosition.zoom < minZoom && !android.os.Debug.isDebuggerConnected())
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(minZoom));
-
         }
 
     };
@@ -270,4 +262,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
 
+    @Override
+    public void onTestNotesPostExecute() {
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+            mAddButton.setVisibility(View.VISIBLE);
+
+            mSplash.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
+    }
 }

@@ -18,19 +18,53 @@
         android:id="@+id/splash"
         android:scaleType="fitStart" />
 
-    <android.support.design.widget.FloatingActionButton
+
+
+    <EditText
+        android:id="@+id/nicknameText"
+        android:inputType="text"
+        android:text="Nickname"
+        android:gravity="top|left"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:textColor="@color/colorText"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:paddingRight="70dp"
+        android:visibility="gone"
+        />
+
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="5dp"
+            android:id="@+id/fabStart"
+            android:src="@drawable/ic_menu_send"
+            android:tint="@color/colorText"
+            android:visibility="gone"
+            app:fabSize="normal" />
+    </FrameLayout>
+
+
+
+    <ProgressBar
+        android:id="@+id/startupProgressBar"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@color/colorAccent"
-        android:tint="@color/colorText"
-        android:src="@drawable/ic_menu_send"
+        android:visibility="invisible"
+        android:layout_marginBottom="43dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="65dp"
-        android:id="@+id/fabStart" />
-
-
+        android:elevation="5dp"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
