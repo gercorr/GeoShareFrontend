@@ -15,9 +15,10 @@ import android.widget.ProgressBar;
 
 import com.logicalpanda.geoshare.config.Config;
 import com.logicalpanda.geoshare.config.ConfigHelper;
+import com.logicalpanda.geoshare.enums.AsyncTaskType;
 import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
 import com.logicalpanda.geoshare.other.CustomEditText;
-import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
+import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.R;
 import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
 import com.logicalpanda.geoshare.rest.TestNotesAsyncTask;
@@ -33,7 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, IHandleTestNotesPostExecute {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, IHandleAsyncTaskPostExecute {
 
 
     private GoogleMap mMap;
@@ -271,7 +272,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     };
 
     @Override
-    public void onTestNotesPostExecute() {
+    public void onAsyncTaskPostExecute(AsyncTaskType taskType) {
             mMapFragment.getView().setVisibility(View.VISIBLE);
             mAddButton.setVisibility(View.VISIBLE);
 

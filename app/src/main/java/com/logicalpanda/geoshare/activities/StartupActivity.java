@@ -14,18 +14,18 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.logicalpanda.geoshare.R;
 import com.google.android.gms.iid.InstanceID;
+import com.logicalpanda.geoshare.R;
 import com.logicalpanda.geoshare.config.Config;
 import com.logicalpanda.geoshare.config.ConfigHelper;
-import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
-import com.logicalpanda.geoshare.pojos.User;
-import com.logicalpanda.geoshare.rest.TestNotesAsyncTask;
+import com.logicalpanda.geoshare.enums.AsyncTaskType;
+import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
+import com.logicalpanda.geoshare.other.Globals;
+import com.logicalpanda.geoshare.rest.RetrieveUserAsyncTask;
 
-public class StartupActivity extends AppCompatActivity implements IHandleTestNotesPostExecute {
+public class StartupActivity extends AppCompatActivity implements IHandleAsyncTaskPostExecute {
 
     private static final int PERMISSIONS_REQUEST_ID = 1;
-    private User user = new User();
 
     private EditText mNickname;
     private ProgressBar mProgressBar;
@@ -41,7 +41,6 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //TODO: Move this somewhere else and instantiate it automatically
         Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
         Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
@@ -54,16 +53,15 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
 
         mProgressBar = (ProgressBar) findViewById(R.id.startupProgressBar);
         mNickname = (EditText) findViewById(R.id.nicknameText);
-        mNickname.setOnClickListener(mOnNicknameClickListener);
 
         mProgressBar.setVisibility(View.VISIBLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        user.setGoogle_instance_id(InstanceID.getInstance(this).getId());
+        Globals.instance().currentUser.setGoogle_instance_id(InstanceID.getInstance(this).getId());
         //TODO: retrieve User obj from backend with this id
         //TODO: user = retrieveUser();
         //TODO: Show loading while attempting to retrieve user
-        prepareApp();
+        logIn();
     }
 
     private final View.OnClickListener mOnStartButtonClickListener = new View.OnClickListener() {
@@ -86,12 +84,13 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
 
     private Boolean attemptSetNickname()
     {
-        if(!IsEmpty(user.getNickname()))
+        if(!IsEmpty(Globals.instance().currentUser.getNickname()))
             return true;
         else {
             String text = mNickname.getText().toString();
             if (!text.isEmpty() && !text.equals("Nickname")) {
-                user.setNickname(text);
+                Globals.instance().currentUser.setNickname(text);
+                logIn();
                 return true;
             }
         }
@@ -131,20 +130,10 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
         return s == null || s.trim().isEmpty();
     }
 
-    private final View.OnClickListener mOnNicknameClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view)
-        {
-            if(mNickname.getText().toString().equals("Nickname")) {
-                mNickname.setText("");
-            }
-        }
-    };
-
-    private void prepareApp()
+    private void logIn()
     {
         try {
-            new TestNotesAsyncTask(this).execute();
+            new RetrieveUserAsyncTask(this).execute();
         }
         catch (Exception e)
         {
@@ -153,17 +142,16 @@ public class StartupActivity extends AppCompatActivity implements IHandleTestNot
     }
 
     @Override
-    public void onTestNotesPostExecute() {
+    public void onAsyncTaskPostExecute(AsyncTaskType taskType) {
 
-        mProgressBar.setVisibility(View.INVISIBLE);
-        if(attemptRequestPermission() && !IsEmpty(user.getNickname()))
-        {
-            startMap();
-        }
-        else if(IsEmpty(user.getNickname()))
-        {
-            mNickname.setVisibility(View.VISIBLE);
-            mStartButton.setVisibility(View.VISIBLE);
+        if(taskType == AsyncTaskType.RetrieveUser) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            if (attemptRequestPermission() && !IsEmpty(Globals.instance().currentUser.getNickname())) {
+                startMap();
+            } else if (IsEmpty(Globals.instance().currentUser.getNickname())) {
+                mNickname.setVisibility(View.VISIBLE);
+                mStartButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 

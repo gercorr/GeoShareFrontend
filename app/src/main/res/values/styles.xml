@@ -1,11 +1,12 @@
 <resources>
     <!-- inherit from the material theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    <item name="windowNoTitle">false</item>
-    <item name="windowActionBar">true</item>
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorAccent">@color/colorAccent</item>
-    <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="windowNoTitle">false</item>
+        <item name="windowActionBar">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:textColorHint">@color/colorPrimary</item>
     </style>
 </resources>

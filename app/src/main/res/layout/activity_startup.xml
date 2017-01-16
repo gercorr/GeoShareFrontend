@@ -23,7 +23,7 @@
     <EditText
         android:id="@+id/nicknameText"
         android:inputType="text"
-        android:text="Nickname"
+        android:hint="Enter Nickname"
         android:gravity="top|left"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"

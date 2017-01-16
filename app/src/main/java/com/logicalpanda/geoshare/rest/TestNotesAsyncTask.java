@@ -3,7 +3,8 @@ package com.logicalpanda.geoshare.rest;
 import android.os.AsyncTask;
 
 import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.interfaces.IHandleTestNotesPostExecute;
+import com.logicalpanda.geoshare.enums.AsyncTaskType;
+import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.pojos.Note;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -15,11 +16,13 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 public class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
 
+    public final AsyncTaskType taskType = AsyncTaskType.TestNotes;
+
     private Exception exception;
-    private IHandleTestNotesPostExecute mCallingActivity;
+    private IHandleAsyncTaskPostExecute mCallingActivity;
 
 
-    public TestNotesAsyncTask(IHandleTestNotesPostExecute callingActivity)
+    public TestNotesAsyncTask(IHandleAsyncTaskPostExecute callingActivity)
     {
         mCallingActivity = callingActivity;
     }
@@ -44,6 +47,6 @@ public class TestNotesAsyncTask extends AsyncTask<String, Void, Note> {
     }
 
     protected void onPostExecute(Note feed) {
-        mCallingActivity.onTestNotesPostExecute();
+        mCallingActivity.onAsyncTaskPostExecute(taskType);
     }
 }
