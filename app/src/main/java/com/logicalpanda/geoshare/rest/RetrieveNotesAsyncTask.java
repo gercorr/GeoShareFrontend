@@ -2,52 +2,52 @@ package com.logicalpanda.geoshare.rest;
 
 import android.os.AsyncTask;
 
-import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.pojos.Note;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.pojos.Note;
+import com.logicalpanda.geoshare.pojos.NotesRequest;
 
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 
-/**
- * Created by Ger on 18/07/2016.
- */
 public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
 
     private Exception exception;
     private final GoogleMap mMap;
     private final ArrayList<Marker> markers;
-    private LatLng lastLatLng;
+    private NotesRequest notesRequest;
 
     public RetrieveNotesAsyncTask(GoogleMap gmap, ArrayList<Marker> currentMarkers, LatLng currentLatLang)
     {
         this.mMap = gmap;
         markers = currentMarkers;
-        lastLatLng = currentLatLang;
+        notesRequest = new NotesRequest();
+        notesRequest.setDistance(0.2);
+        notesRequest.setLatitude(currentLatLang.latitude);
+        notesRequest.setLongitude(currentLatLang.longitude);
     }
 
 
     protected Note[] doInBackground(String... urls) {
         try {
 
+
             final String url = Config.restUrl + "rest/getAllNotesWithinDistance/";
             RestTemplate restTemplate = new RestTemplate();
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                    .queryParam("lat", lastLatLng.latitude)
-                    .queryParam("long", lastLatLng.longitude)
-                    .queryParam("distance", 0.02);//might move distance server side
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            Note[] notes = restTemplate.getForObject(builder.build().encode().toUri(),  Note[].class);
-            return notes;
+            HttpEntity<NotesRequest> entity = new HttpEntity<>(notesRequest,headers);
+            return restTemplate.exchange(url, HttpMethod.POST, entity, Note[].class).getBody();
 
         } catch (Exception e) {
             this.exception = e;

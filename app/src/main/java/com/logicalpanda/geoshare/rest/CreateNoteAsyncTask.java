@@ -2,56 +2,41 @@ package com.logicalpanda.geoshare.rest;
 
 import android.os.AsyncTask;
 
-import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.pojos.Note;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.pojos.Note;
 
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * Created by Ger on 18/07/2016.
- */
 public class CreateNoteAsyncTask extends AsyncTask<String, Void, Note> {
 
     private Note note;
     private final GoogleMap mMap;
 
 
-    public CreateNoteAsyncTask(GoogleMap gmap, LatLng latLng, String text)
+    public CreateNoteAsyncTask(GoogleMap gmap, Note noteToSend)
     {
         this.mMap = gmap;
-
-        note = new Note( );
-        note.setText(text);
-        note.setLatitude(latLng.latitude);
-        note.setLongitude(latLng.longitude);
-
+        note = noteToSend;
     }
-
-    public CreateNoteAsyncTask(GoogleMap gmap, LatLng latLng)
-    {
-        this(gmap, latLng, " ");
-    }
-
 
     protected Note doInBackground(String... urls) {
         try {
             final String url = Config.restUrl + "rest/addNote/";
             RestTemplate restTemplate = new RestTemplate();
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                    .queryParam("text", note.getText())
-                    .queryParam("lat", note.getLatitude())
-                    .queryParam("long", note.getLongitude());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
+            HttpEntity<Note> entity = new HttpEntity<>(note,headers);
+            return restTemplate.exchange(url, HttpMethod.POST, entity, Note.class).getBody();
 
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            Note note = restTemplate.getForObject(builder.build().encode().toUri(), Note.class);
-            return note;
         } catch (Exception e) {
             System.out.println(e.toString());
             return new Note();

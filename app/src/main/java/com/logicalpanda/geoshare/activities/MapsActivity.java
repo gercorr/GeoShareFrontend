@@ -13,15 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.config.ConfigHelper;
-import com.logicalpanda.geoshare.enums.AsyncTaskType;
-import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
-import com.logicalpanda.geoshare.other.CustomEditText;
-import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
-import com.logicalpanda.geoshare.R;
-import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
-import com.logicalpanda.geoshare.rest.TestNotesAsyncTask;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -31,6 +22,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.logicalpanda.geoshare.R;
+import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.config.ConfigHelper;
+import com.logicalpanda.geoshare.enums.AsyncTaskType;
+import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
+import com.logicalpanda.geoshare.other.CustomEditText;
+import com.logicalpanda.geoshare.pojos.Note;
+import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
+import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
+import com.logicalpanda.geoshare.rest.RetrieveUserAsyncTask;
 
 import java.util.ArrayList;
 
@@ -89,15 +90,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onResume(){
         super.onResume();
-        prepareApp();
+        logIn();
     }
 
-    private void prepareApp()
+    private void logIn()
     {
         mProgressBar.setVisibility(View.VISIBLE);
-
         try {
-            new TestNotesAsyncTask(this).execute();
+            new RetrieveUserAsyncTask(this).execute();
         }
         catch (Exception e)
         {
@@ -175,8 +175,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void SendInputFromTextBox()
     {
         String text = mText.getText().toString();
-        if(!text.isEmpty())
-            new CreateNoteAsyncTask(mMap, lastLatLng, text).execute();
+        if(!text.isEmpty()) {
+            new CreateNoteAsyncTask(mMap, new Note(lastLatLng, text)).execute();
+        }
         mText.setText("");
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

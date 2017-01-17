@@ -1,6 +1,18 @@
 package com.logicalpanda.geoshare.pojos;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Note {
+
+    public Note()
+    {}
+
+    public Note(LatLng latLng, String text)
+    {
+        setLatitude(latLng.latitude);
+        setLongitude(latLng.longitude);
+        setText(text);
+    }
 
     private int id;
 

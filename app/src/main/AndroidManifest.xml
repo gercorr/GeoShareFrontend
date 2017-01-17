@@ -34,7 +34,7 @@
             android:name="com.logicalpanda.geoshare.activities.MapsActivity"
             android:label="Map">
         </activity>
-        <activity android:name="com.logicalpanda.geoshare.activities.StartupActivity" android:label="Startup">
+        <activity android:name="com.logicalpanda.geoshare.activities.StartupActivity" android:label="GeoShare">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
