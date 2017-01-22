@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -118,11 +117,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) throws SecurityException{
         mMap = googleMap;
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
-        mMap.getUiSettings().setRotateGesturesEnabled(false);
+
 
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
@@ -131,7 +130,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraMoveListener(mCameraListener);
 
 
-        //mMap.setIndoorEnabled(true);
         mMap.setBuildingsEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
@@ -145,7 +143,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
-        mMap.setOnMapLongClickListener(mOnMapLongClickListener);
         mMap.setMinZoomPreference(minZoom);
         MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));//.rotation(90);
         userMarker = mMap.addMarker(markerOptions);
@@ -187,15 +184,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mSendButton.setVisibility(View.INVISIBLE);
         mAddButton.setVisibility(View.VISIBLE);
     }
-
-    private final OnMapLongClickListener mOnMapLongClickListener = new OnMapLongClickListener() {
-
-        @Override
-        public void onMapLongClick(LatLng latLng) {
-            //new CreateNoteAsyncTask(mMap, latLng).execute();
-        }
-    };
-
 
 
     private final GoogleMap.OnCameraMoveListener mCameraListener = new GoogleMap.OnCameraMoveListener() {
