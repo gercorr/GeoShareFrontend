@@ -1,6 +1,7 @@
 package com.logicalpanda.geoshare.pojos;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.logicalpanda.geoshare.other.Globals;
 
 public class Note {
 
@@ -12,6 +13,7 @@ public class Note {
         setLatitude(latLng.latitude);
         setLongitude(latLng.longitude);
         setText(text);
+        setUser(Globals.getCurrentUser());
     }
 
     private int id;
@@ -21,6 +23,8 @@ public class Note {
     private double latitude;
 
     private double longitude;
+
+    private User user;
 
     public int getId( ) {
         return id;
@@ -52,6 +56,14 @@ public class Note {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

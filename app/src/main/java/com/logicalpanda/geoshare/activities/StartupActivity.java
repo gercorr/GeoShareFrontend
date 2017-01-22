@@ -57,7 +57,7 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
         mProgressBar.setVisibility(View.VISIBLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        Globals.instance().currentUser.setGoogle_instance_id(InstanceID.getInstance(this).getId());
+        Globals.getCurrentUser().setGoogle_instance_id(InstanceID.getInstance(this).getId());
         //TODO: retrieve User obj from backend with this id
         //TODO: user = retrieveUser();
         //TODO: Show loading while attempting to retrieve user
@@ -84,12 +84,12 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
 
     private Boolean attemptSetNickname()
     {
-        if(!IsEmpty(Globals.instance().currentUser.getNickname()))
+        if(!IsEmpty(Globals.getCurrentUser().getNickname()))
             return true;
         else {
             String text = mNickname.getText().toString();
             if (!text.isEmpty() && !text.equals("Nickname")) {
-                Globals.instance().currentUser.setNickname(text);
+                Globals.getCurrentUser().setNickname(text);
                 logIn();
                 return true;
             }
@@ -146,9 +146,9 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
 
         if(taskType == AsyncTaskType.RetrieveUser) {
             mProgressBar.setVisibility(View.INVISIBLE);
-            if (attemptRequestPermission() && !IsEmpty(Globals.instance().currentUser.getNickname())) {
+            if (attemptRequestPermission() && !IsEmpty(Globals.getCurrentUser().getNickname())) {
                 startMap();
-            } else if (IsEmpty(Globals.instance().currentUser.getNickname())) {
+            } else if (IsEmpty(Globals.getCurrentUser().getNickname())) {
                 mNickname.setVisibility(View.VISIBLE);
                 mStartButton.setVisibility(View.VISIBLE);
             }

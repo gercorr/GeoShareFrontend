@@ -35,10 +35,11 @@ public class RetrieveUserAsyncTask extends AsyncTask<String, Void, User> {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<User> entity = new HttpEntity<>(Globals.instance().currentUser,headers);
-            Globals.instance().currentUser = restTemplate.exchange(url, HttpMethod.POST, entity, User.class).getBody();
+            HttpEntity<User> entity = new HttpEntity<>(Globals.getCurrentUser(),headers);
+            User currentUser = restTemplate.exchange(url, HttpMethod.POST, entity, User.class).getBody();
+            Globals.setCurrentUser(currentUser);
 
-            return Globals.instance().currentUser;
+            return Globals.getCurrentUser();
 
         } catch (Exception e) {
             this.exception = e;

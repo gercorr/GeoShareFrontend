@@ -68,7 +68,8 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
         for (Note note: feed) {
 
             LatLng newLatLng = new LatLng(note.getLatitude(), note.getLongitude());
-            Marker marker = mMap.addMarker(new MarkerOptions().position(newLatLng).title(note.getText()));
+            String nickname = note.getUser() == null ? "Unknown" : note.getUser().getNickname();
+            Marker marker = mMap.addMarker(new MarkerOptions().position(newLatLng).title(nickname).snippet(note.getText()));
             markers.add(marker);
 
         }

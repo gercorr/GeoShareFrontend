@@ -52,6 +52,6 @@ public class CreateNoteAsyncTask extends AsyncTask<String, Void, Note> {
         //MarkerOptions marker = new MarkerOptions();
         //BitmapDescriptor bitmap = BitmapDescriptorFactory.fromFile("C:\\Android\\placeholder.bmp");
         //marker.icon(bitmap);
-        mMap.addMarker(new MarkerOptions().position(newLatLng).title(noteFromBackend.getText()));
+        mMap.addMarker(new MarkerOptions().position(newLatLng).title(noteFromBackend.getUser().getNickname()).snippet(noteFromBackend.getText()));
     }
 }

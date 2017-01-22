@@ -19,6 +19,15 @@ public class Globals {
         return _instance;
     }
 
-    public User currentUser = new User();
+    private User currentUser = new User();
+
+    public static User getCurrentUser()
+    {
+        return instance().currentUser;
+    }
+    public static void setCurrentUser(User user)
+    {
+        instance().currentUser = user;
+    }
 
 }
