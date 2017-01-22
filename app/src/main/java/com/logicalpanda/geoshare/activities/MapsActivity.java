@@ -123,11 +123,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomGesturesEnabled(true);
 
 
-
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
                 (float) 0.01, mLocationListener);
 
         mMap.setOnCameraMoveListener(mCameraListener);
+        mMap.setOnMarkerClickListener(mOnMarkerClickListener);
 
 
         mMap.setBuildingsEnabled(true);
@@ -144,8 +144,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
         mMap.setMinZoomPreference(minZoom);
-        MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));//.rotation(90);
+        MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));;//.rotation(90);
         userMarker = mMap.addMarker(markerOptions);
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater(), userMarker));
+
     }
 
     private final View.OnClickListener mOnAddButtonClickListener = new View.OnClickListener() {
@@ -194,6 +196,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLng));
         }
 
+    };
+
+    private final GoogleMap.OnMarkerClickListener mOnMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            return false;
+        }
     };
 
 
