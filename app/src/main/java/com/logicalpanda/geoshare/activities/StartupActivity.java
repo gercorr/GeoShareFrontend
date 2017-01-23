@@ -64,6 +64,12 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
         logIn();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        logIn();
+    }
+
     private final View.OnClickListener mOnStartButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view)

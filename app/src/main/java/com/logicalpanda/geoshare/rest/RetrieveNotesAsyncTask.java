@@ -64,6 +64,7 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
         {
             marker.remove();
         }
+        markers.clear();
 
         for (Note note: feed) {
 

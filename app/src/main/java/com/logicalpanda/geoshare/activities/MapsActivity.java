@@ -6,7 +6,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -34,7 +37,7 @@ import com.logicalpanda.geoshare.rest.RetrieveUserAsyncTask;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, IHandleAsyncTaskPostExecute {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, IHandleAsyncTaskPostExecute {
 
 
     private GoogleMap mMap;
@@ -90,6 +93,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onResume(){
         super.onResume();
         logIn();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                // search action
+                return true;
+            case R.id.action_refresh:
+                new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
+                return true;
+            case R.id.action_list:
+                // refresh
+                return true;
+            case R.id.action_following:
+                // help action
+                return true;
+            case R.id.action_account:
+                // check for updates action
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void logIn()
@@ -201,7 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final GoogleMap.OnMarkerClickListener mOnMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
             return false;
         }
     };
