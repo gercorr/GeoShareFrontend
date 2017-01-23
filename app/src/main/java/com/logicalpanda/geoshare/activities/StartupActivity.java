@@ -105,7 +105,7 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
 
     private Boolean attemptRequestPermission()
     {
-        if (permissionGranted == false || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (!permissionGranted || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, PERMS, PERMISSIONS_REQUEST_ID);
             return false;

@@ -182,7 +182,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
         mMap.setMinZoomPreference(minZoom);
-        MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));;//.rotation(90);
+        MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         userMarker = mMap.addMarker(markerOptions);
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater(), userMarker));
 

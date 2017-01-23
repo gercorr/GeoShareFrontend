@@ -4,35 +4,35 @@
     <!-- Search / will display always -->
     <item android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:title="Search"
+        android:title="@string/search"
         android:tint="@color/colorText"
         app:showAsAction="ifRoom"/>
 
     <!-- Refresh -->
     <item android:id="@+id/action_refresh"
         android:icon="@drawable/ic_autorenew_black_24dp"
-        android:title="Refresh"
+        android:title="@string/refresh"
         android:tint="@color/colorText"
         app:showAsAction="ifRoom" />
 
     <!-- Help -->
     <item android:id="@+id/action_list"
         android:icon="@drawable/ic_list_black_24dp"
-        android:title="My Notes"
+        android:title="@string/my_notes"
         android:tint="@color/colorText"
         app:showAsAction="ifRoom"/>
 
     <!-- Check updates -->
     <item android:id="@+id/action_following"
         android:icon="@drawable/ic_people_black_24dp"
-        android:title="Following"
+        android:title="@string/following"
         android:tint="@color/colorText"
         app:showAsAction="ifRoom" />
 
     <!-- Check updates -->
     <item android:id="@+id/action_account"
         android:icon="@drawable/ic_account_circle_black_24dp"
-        android:title="Account"
+        android:title="@string/account"
         android:tint="@color/colorText"
         app:showAsAction="ifRoom" />
 </menu>

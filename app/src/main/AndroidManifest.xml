@@ -32,7 +32,6 @@
 
         <activity
             android:name="com.logicalpanda.geoshare.activities.MapsActivity" android:label="Map">
-            <category android:name="android.intent.category.LAUNCHER" />
         </activity>
         <activity android:name="com.logicalpanda.geoshare.activities.StartupActivity" android:label="GeoShare">
             <intent-filter>
