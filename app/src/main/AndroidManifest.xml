@@ -31,7 +31,16 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.logicalpanda.geoshare.activities.MapsActivity" android:label="Map">
+            android:name="com.logicalpanda.geoshare.activities.MapsActivity" android:label="Map" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
+            android:name="com.logicalpanda.geoshare.activities.NoteListActivity" android:label="Notes">
         </activity>
         <activity android:name="com.logicalpanda.geoshare.activities.StartupActivity" android:label="GeoShare">
             <intent-filter>
