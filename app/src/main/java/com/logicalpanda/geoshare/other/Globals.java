@@ -30,4 +30,15 @@ public class Globals {
         instance().currentUser = user;
     }
 
+    private String currentFilteredNickname = null;
+
+    public static String getCurrentFilteredNickname()
+    {
+        return instance().currentFilteredNickname;
+    }
+    public static void setCurrentFilteredNickname(String nickname)
+    {
+        instance().currentFilteredNickname = nickname;
+    }
+
 }

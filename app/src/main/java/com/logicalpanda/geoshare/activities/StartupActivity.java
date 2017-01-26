@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import com.google.android.gms.iid.InstanceID;
 import com.logicalpanda.geoshare.R;
 import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.config.ConfigHelper;
 import com.logicalpanda.geoshare.enums.AsyncTaskType;
 import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.other.Globals;
@@ -41,11 +40,7 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: Move this somewhere else and instantiate it automatically
-        Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
-        Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
-        Config.distanceToRetrieve = ConfigHelper.getConfigValue(this, "distanceToRetrieve");
-
+        Config.SetupConfig(this);
 
         setContentView(R.layout.activity_startup);
         mStartButton = (FloatingActionButton) findViewById(R.id.fabStart);

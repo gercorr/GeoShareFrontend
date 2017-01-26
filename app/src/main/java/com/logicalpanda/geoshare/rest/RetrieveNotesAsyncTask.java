@@ -25,7 +25,7 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
     private final ArrayList<Marker> markers;
     private NotesRequest notesRequest;
 
-    public RetrieveNotesAsyncTask(GoogleMap gmap, ArrayList<Marker> currentMarkers, LatLng currentLatLang)
+    public RetrieveNotesAsyncTask(GoogleMap gmap, ArrayList<Marker> currentMarkers, LatLng currentLatLang, String nickname)
     {
         this.mMap = gmap;
         markers = currentMarkers;
@@ -33,6 +33,7 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
         notesRequest.setDistance(0.2);
         notesRequest.setLatitude(currentLatLang.latitude);
         notesRequest.setLongitude(currentLatLang.longitude);
+        notesRequest.setNickname(nickname);
     }
 
 

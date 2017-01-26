@@ -29,10 +29,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.logicalpanda.geoshare.R;
 import com.logicalpanda.geoshare.config.Config;
-import com.logicalpanda.geoshare.config.ConfigHelper;
 import com.logicalpanda.geoshare.enums.AsyncTaskType;
 import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.other.CustomEditText;
+import com.logicalpanda.geoshare.other.Globals;
 import com.logicalpanda.geoshare.pojos.Note;
 import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
 import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
@@ -65,11 +65,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //TODO: Move this somewhere else and instantiate it automatically
-        Config.restUrl = ConfigHelper.getConfigValue(this, "rest_url");
-        Config.restKey = ConfigHelper.getConfigValue(this, "rest_key");
-        Config.distanceToRetrieve = ConfigHelper.getConfigValue(this, "distanceToRetrieve");
+        Config.SetupConfig(this);
 
         setContentView(R.layout.custom_ui);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -99,15 +95,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     @Override
     protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            //use the query to search your data somehow
+            Globals.setCurrentFilteredNickname(query);
+            retrieveNotes();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -119,6 +113,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnCloseListener(mOnSearchCloseListener);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -134,7 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // search action
                 return true;
             case R.id.action_refresh:
-                new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
+                retrieveNotes();
                 return true;
             case R.id.action_list:
                 Intent intent = new Intent(this, NoteListActivity.class);
@@ -161,6 +157,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             //gotta do something here
         }
+    }
+
+    private void retrieveNotes()
+    {
+        new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng, Globals.getCurrentFilteredNickname()).execute();
     }
 
 
@@ -198,7 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         lastLatLng = newLatLng;
 
         lastSearchLatLng = lastLatLng;
-        new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
+        retrieveNotes();
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
@@ -265,6 +266,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
+    private final SearchView.OnCloseListener mOnSearchCloseListener = new SearchView.OnCloseListener() {
+        @Override
+        public boolean onClose() {
+            retrieveNotes();
+            return false;
+        }
+    };
+
 
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
@@ -279,7 +288,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(needToRefreshMap()) {
                 lastSearchLatLng = lastLatLng;
-                new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng).execute();
+                retrieveNotes();
             }
 
         }

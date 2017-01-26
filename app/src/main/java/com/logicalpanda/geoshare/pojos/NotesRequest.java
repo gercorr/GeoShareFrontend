@@ -4,6 +4,7 @@ public class NotesRequest {
     private double latitude;
     private double longitude;
     private double distance;
+    private String nickname;
 
     public double getLatitude() {
         return latitude;
@@ -27,5 +28,13 @@ public class NotesRequest {
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
