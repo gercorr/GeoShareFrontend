@@ -3,6 +3,8 @@ package com.logicalpanda.geoshare.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,29 +25,31 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.logicalpanda.geoshare.R;
 import com.logicalpanda.geoshare.config.Config;
 import com.logicalpanda.geoshare.enums.AsyncTaskType;
 import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.other.CustomEditText;
 import com.logicalpanda.geoshare.other.Globals;
+import com.logicalpanda.geoshare.other.LatLngForGrouping;
 import com.logicalpanda.geoshare.pojos.Note;
 import com.logicalpanda.geoshare.rest.CreateNoteAsyncTask;
 import com.logicalpanda.geoshare.rest.RetrieveNotesAsyncTask;
 import com.logicalpanda.geoshare.rest.RetrieveUserAsyncTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, IHandleAsyncTaskPostExecute {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, IHandleAsyncTaskPostExecute, GoogleMap.OnInfoWindowClickListener {
 
 
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
-    private ArrayList<Marker> mMarkers = new ArrayList<>();
+    private final HashMap<LatLngForGrouping, ArrayList<Note>> mAllCurrentNotes = new HashMap<>();
     private FloatingActionButton mAddButton;
     private FloatingActionButton mSendButton;
     private CustomEditText mText;
@@ -57,9 +61,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private final float minZoom = 17.0f;
     private final float initialZoom = 19.0f;
+    private final int tilt = 50;
+    private float currentZoom = 0;
     private LatLng lastLatLng;
     private LatLng lastSearchLatLng;
-    private Marker userMarker;
 
 
     @Override
@@ -89,8 +94,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) throws SecurityException{
+        mMap = googleMap;
+        mMap.getUiSettings().setAllGesturesEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnCameraMoveListener(mCameraListener);
+        mMap.setOnMarkerClickListener(mOnMarkerClickListener);
+        mMap.setBuildingsEnabled(true);
+        mMap.setMinZoomPreference(minZoom);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
+                (float) 0.01, mLocationListener);
+        Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        setCameraPosition(currentLocation, initialZoom);
+
+        lastSearchLatLng = lastLatLng;
+        retrieveNotes();
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
+        mMap.setOnInfoWindowClickListener(this);
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
+        Globals.setCurrentFilteredNickname(null);
         logIn();
     }
     @Override
@@ -116,6 +150,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         searchView.setOnCloseListener(mOnSearchCloseListener);
 
+        //YUCK. XML tint value doesnt work with drawable TODO: Change drawables to white?
+        MenuItem item = menu.findItem(R.id.action_search);
+        Drawable icon = item.getIcon();
+        icon.setColorFilter(getResources().getColor(R.color.colorText), PorterDuff.Mode.SRC_IN);
+        item = menu.findItem(R.id.action_refresh);
+        icon = item.getIcon();
+        icon.setColorFilter(getResources().getColor(R.color.colorText), PorterDuff.Mode.SRC_IN);
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -136,15 +179,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(this, NoteListActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_following:
-                // help action
-                return true;
-            case R.id.action_account:
-                // check for updates action
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Globals.setCurrentMarker(marker);
+        Intent intent = new Intent(this, NoteListActivity.class);
+        startActivity(intent);
     }
 
     private void logIn()
@@ -161,53 +205,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void retrieveNotes()
     {
-        new RetrieveNotesAsyncTask(mMap, mMarkers, lastSearchLatLng, Globals.getCurrentFilteredNickname()).execute();
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) throws SecurityException{
-        mMap = googleMap;
-        mMap.getUiSettings().setAllGesturesEnabled(false);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        mMap.getUiSettings().setZoomGesturesEnabled(true);
-
-
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
-                (float) 0.01, mLocationListener);
-
-        mMap.setOnCameraMoveListener(mCameraListener);
-        mMap.setOnMarkerClickListener(mOnMarkerClickListener);
-
-
-        mMap.setBuildingsEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-
-        Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        LatLng newLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        lastLatLng = newLatLng;
-
-        lastSearchLatLng = lastLatLng;
-        retrieveNotes();
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(initialZoom));
-        mMap.setMinZoomPreference(minZoom);
-        MarkerOptions markerOptions = new MarkerOptions().position(lastLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        userMarker = mMap.addMarker(markerOptions);
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater(), userMarker));
-
+        new RetrieveNotesAsyncTask(mMap, mAllCurrentNotes, lastSearchLatLng, Globals.getCurrentFilteredNickname()).execute();
     }
 
     private final View.OnClickListener mOnAddButtonClickListener = new View.OnClickListener() {
@@ -235,7 +233,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         String text = mText.getText().toString();
         if(!text.isEmpty()) {
-            new CreateNoteAsyncTask(mMap, new Note(lastLatLng, text)).execute();
+            new CreateNoteAsyncTask(mMap, mAllCurrentNotes, new Note(lastLatLng, text)).execute();
         }
         mText.setText("");
 
@@ -253,7 +251,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onCameraMove()
         {
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLng));
+            //LatLngBounds bounds = new LatLngBounds(lastLatLng, lastLatLng);
+            //mMap.setLatLngBoundsForCameraTarget(bounds);
         }
 
     };
@@ -261,7 +260,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final GoogleMap.OnMarkerClickListener mOnMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+            //marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
             return false;
         }
     };
@@ -269,22 +268,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final SearchView.OnCloseListener mOnSearchCloseListener = new SearchView.OnCloseListener() {
         @Override
         public boolean onClose() {
+            Globals.setCurrentFilteredNickname(null);
             retrieveNotes();
             return false;
         }
     };
 
 
+    private void setCameraPosition(Location location, float zoom)
+    {
+        LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        lastLatLng = newLatLng;
+
+        float bearing = 0;
+        if(location.hasBearing())
+            bearing = location.getBearing();
+
+        currentZoom = zoom;
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(lastLatLng)             // Sets the center of the map to current location
+                .bearing(bearing) // Sets the orientation of the camera to east
+                .zoom(currentZoom)
+                .tilt(tilt)                   // Sets the tilt of the camera to 0 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        LatLngBounds bounds = new LatLngBounds(lastLatLng, lastLatLng);
+        mMap.setLatLngBoundsForCameraTarget(bounds);
+    }
+
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
 
-            LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            lastLatLng = newLatLng;
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLng));
-            userMarker.setPosition(lastLatLng);
-
+            setCameraPosition(location, mMap.getCameraPosition().zoom);
 
             if(needToRefreshMap()) {
                 lastSearchLatLng = lastLatLng;

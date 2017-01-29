@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.logicalpanda.geoshare.config.Config;
+import com.logicalpanda.geoshare.other.LatLngForGrouping;
 import com.logicalpanda.geoshare.pojos.Note;
 import com.logicalpanda.geoshare.pojos.NotesRequest;
 
@@ -17,18 +18,20 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
 
     private Exception exception;
     private final GoogleMap mMap;
-    private final ArrayList<Marker> markers;
+    private final HashMap<LatLngForGrouping, ArrayList<Note>> notes;
     private NotesRequest notesRequest;
 
-    public RetrieveNotesAsyncTask(GoogleMap gmap, ArrayList<Marker> currentMarkers, LatLng currentLatLang, String nickname)
+    public RetrieveNotesAsyncTask(GoogleMap gmap, HashMap<LatLngForGrouping, ArrayList<Note>> mAllCurrentNotes, LatLng currentLatLang, String nickname)
     {
         this.mMap = gmap;
-        markers = currentMarkers;
+        notes = mAllCurrentNotes;
         notesRequest = new NotesRequest();
         notesRequest.setDistance(0.2);
         notesRequest.setLatitude(currentLatLang.latitude);
@@ -60,21 +63,33 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
     protected void onPostExecute(Note[] feed) {
         // TODO: check this.exception
 
-        //cleardown old markers (except user)
-        for (Marker marker : markers)
-        {
-            marker.remove();
-        }
-        markers.clear();
+        mMap.clear();
+        notes.clear();
 
+        //Add to list
         for (Note note: feed) {
-
-            LatLng newLatLng = new LatLng(note.getLatitude(), note.getLongitude());
-            String nickname = note.getUser() == null ? "Unknown" : note.getUser().getNickname();
-            Marker marker = mMap.addMarker(new MarkerOptions().position(newLatLng).title(nickname).snippet(note.getText()));
-            markers.add(marker);
-
+            LatLngForGrouping groupableLatLng = new LatLngForGrouping(note.getLatitude(),note.getLongitude());
+            ArrayList<Note> currentList = notes.get(groupableLatLng);
+            if(currentList == null){
+                currentList = new ArrayList<Note>();
+                notes.put(groupableLatLng, currentList);
+            }
+            currentList.add(note);
         }
+
+        //add markers to map
+        for(Map.Entry<LatLngForGrouping, ArrayList<Note>> entry : notes.entrySet()) {
+            LatLngForGrouping key = entry.getKey();
+            ArrayList<Note> value = entry.getValue();
+
+            LatLng newLatLng = new LatLng(key.getLatitude(), key.getLongitude());
+
+            MarkerOptions markerOptions = new MarkerOptions().position(newLatLng);
+            Marker marker = mMap.addMarker(markerOptions);
+            marker.setTag(value);
+        }
+
 
     }
+
 }

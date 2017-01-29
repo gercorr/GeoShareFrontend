@@ -14,9 +14,11 @@
         android:contentDescription="Firstpage Splash"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/map_splash"
         android:id="@+id/splash"
-        android:scaleType="fitStart" />
+/>
 
 
 
@@ -59,6 +61,8 @@
     <ProgressBar
         android:id="@+id/startupProgressBar"
         style="?android:attr/progressBarStyleLarge"
+        android:tint="@color/colorText"
+        android:indeterminateTint="@color/colorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"

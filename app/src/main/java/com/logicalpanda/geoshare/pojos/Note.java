@@ -3,6 +3,8 @@ package com.logicalpanda.geoshare.pojos;
 import com.google.android.gms.maps.model.LatLng;
 import com.logicalpanda.geoshare.other.Globals;
 
+import java.util.Date;
+
 public class Note {
 
     public Note()
@@ -25,6 +27,8 @@ public class Note {
     private double longitude;
 
     private User user;
+
+    private Date createdDate;
 
     public int getId( ) {
         return id;
@@ -64,6 +68,16 @@ public class Note {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getCreatedDate()
+    {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate)
+    {
+        this.createdDate = createdDate;
     }
 
 }

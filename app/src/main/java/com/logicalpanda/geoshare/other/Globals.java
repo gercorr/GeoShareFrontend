@@ -1,5 +1,6 @@
 package com.logicalpanda.geoshare.other;
 
+import com.google.android.gms.maps.model.Marker;
 import com.logicalpanda.geoshare.pojos.User;
 
 /**
@@ -39,6 +40,17 @@ public class Globals {
     public static void setCurrentFilteredNickname(String nickname)
     {
         instance().currentFilteredNickname = nickname;
+    }
+
+    private Marker currentMarker;
+
+    public static Marker getCurrentMarker()
+    {
+        return instance().currentMarker;
+    }
+    public static void setCurrentMarker(Marker marker)
+    {
+        instance().currentMarker = marker;
     }
 
 }
