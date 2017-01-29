@@ -15,6 +15,7 @@ import com.logicalpanda.geoshare.pojos.Note;
 import com.logicalpanda.geoshare.rest.RetrieveUserNoteListAsyncTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Ger on 25/01/2017.
@@ -57,6 +58,7 @@ public class NoteListActivity extends AppCompatActivity {
         if(currentMarker != null)
         {
             ArrayList<Note> notesArrayList = (ArrayList<Note>)currentMarker.getTag();
+            Collections.sort(notesArrayList, new Note());
             Note [] notesArray = notesArrayList.toArray(new Note[notesArrayList.size()]);
             NoteListAdapter mAdapter = new NoteListAdapter(notesArray);
             mRecyclerView.setAdapter(mAdapter);

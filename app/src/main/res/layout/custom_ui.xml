@@ -4,6 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map_container"
+        android:background="@color/colorSplashBackground"
         android:orientation="vertical" >
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,6 +32,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:paddingRight="70dp"
+            android:maxLength="63206"
             android:paddingBottom="50dp"
             android:visibility="gone"
             />

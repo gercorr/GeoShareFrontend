@@ -3,6 +3,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:columnCount="2"
+    android:rowCount="3"
     android:weightSum="1">
 
     <TextView
@@ -10,8 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:layout_gravity="center_vertical"
         android:elevation="5dp"
         android:id="@+id/title" />
+
+
 
     <TextView
         android:text="TextView"
@@ -20,4 +25,14 @@
         android:scrollbars="vertical"
         android:elevation="5dp"
         android:id="@+id/content" />
+
+    <ImageView
+        android:id="@+id/info_next2"
+        android:layout_width="wrap_content"
+        android:tint="@color/colorBlack"
+        android:src="@drawable/ic_menu_send"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="center_vertical"
+        android:layout_rowSpan="2"/>
 </GridLayout>

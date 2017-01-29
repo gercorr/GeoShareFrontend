@@ -12,7 +12,7 @@ import com.logicalpanda.geoshare.pojos.Note;
 import com.logicalpanda.geoshare.pojos.User;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -34,6 +34,9 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
 
         ArrayList<Note> notes = (ArrayList<Note>) arg0.getTag();
+
+        Collections.sort(notes, new Note());
+
         String title = Integer.toString(notes.size()) + " Notes";
         StringBuilder content = new StringBuilder();
         int count = 0;
@@ -44,7 +47,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 content.append("...");
                 break;
             }
-            content.append(timeDifference(note.getCreatedDate()) + " ");
+            content.append(note.timeDifference() + " ");
             User currentUser = Globals.getCurrentUser();
             if(note.getUser().getId() == currentUser.getId())
             {
@@ -69,37 +72,5 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         return mContentsView;
 
-    }
-
-    private static String timeDifference(Date createdDate)
-    {
-        Date now = new Date();
-        return friendlyTimeDiff(now.getTime() - createdDate.getTime());
-    }
-
-    private static String friendlyTimeDiff(long timeDifferenceMilliseconds) {
-        long diffSeconds = timeDifferenceMilliseconds / 1000;
-        long diffMinutes = timeDifferenceMilliseconds / (60 * 1000);
-        long diffHours = timeDifferenceMilliseconds / (60 * 60 * 1000);
-        long diffDays = timeDifferenceMilliseconds / (60 * 60 * 1000 * 24);
-        long diffWeeks = timeDifferenceMilliseconds / (60 * 60 * 1000 * 24 * 7);
-        long diffMonths = (long) (timeDifferenceMilliseconds / (60 * 60 * 1000 * 24 * 30.41666666));
-        long diffYears = timeDifferenceMilliseconds / ((long)60 * 60 * 1000 * 24 * 365);
-
-        if (diffMinutes < 1) {
-            return diffSeconds + " seconds ago";
-        } else if (diffHours < 1) {
-            return diffMinutes + " minutes ago";
-        } else if (diffDays < 1) {
-            return diffHours + " hours ago";
-        } else if (diffWeeks < 1) {
-            return diffDays + " days ago";
-        } else if (diffMonths < 1) {
-            return diffWeeks + " weeks ago";
-        } else if (diffYears < 1) {
-            return diffMonths + " months ago";
-        } else {
-            return diffYears + " years ago";
-        }
     }
 }

@@ -22,12 +22,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteHo
     public class NoteHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView txtHeader;
+        public TextView txtHeaderTime;
         public TextView txtFooter;
 
         public NoteHolder(View v) {
             super(v);
-            txtHeader = (TextView) v.findViewById(R.id.firstLine);
-            txtFooter = (TextView) v.findViewById(R.id.secondLine);
+            txtHeader = (TextView) v.findViewById(R.id.first_line);
+            txtHeaderTime = (TextView) v.findViewById(R.id.first_line_date);
+            txtFooter = (TextView) v.findViewById(R.id.second_line);
         }
     }
 
@@ -52,6 +54,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteHo
         // - replace the contents of the view with that element
 
         holder.txtHeader.setText(mDataset[position].getUser().getNickname());
+        holder.txtHeaderTime.setText(mDataset[position].timeDifference());
         holder.txtFooter.setText(mDataset[position].getText());
 
     }

@@ -1,42 +1,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip">
+    android:padding="6dip"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginRight="6dip"
         android:contentDescription="TODO"
         android:tint="@color/colorBlack"
         android:src="@drawable/ic_place_black_24dp" />
 
     <TextView
-        android:id="@+id/secondLine"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/icon"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/firstLine"
-        android:layout_width="fill_parent"
+        android:id="@+id/first_line"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_toRightOf="@id/icon"
         android:gravity="center_vertical"
-        android:text="Example application"
+        android:textStyle="bold"
+        android:text="Username"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/first_line_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:gravity="center_vertical"
+        android:text="28 days ago"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/second_line"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="7px"
+        android:width="0dip"
+        android:textSize="12sp"
+        android:layout_below="@id/first_line"
+        android:text="ntentExample note contentExample note content \n Example e content Example note content ntentExample note contentExample note content Example note c\nontent Example note conte not\ne content Example note content ntentExample note contentExample note content Example note content Example note content"
+        />
+
+
 
 </RelativeLayout>
