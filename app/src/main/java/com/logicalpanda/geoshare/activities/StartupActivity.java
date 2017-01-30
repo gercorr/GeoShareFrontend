@@ -20,6 +20,8 @@ import com.logicalpanda.geoshare.config.Config;
 import com.logicalpanda.geoshare.enums.AsyncTaskType;
 import com.logicalpanda.geoshare.interfaces.IHandleAsyncTaskPostExecute;
 import com.logicalpanda.geoshare.other.Globals;
+import com.logicalpanda.geoshare.pojos.User;
+import com.logicalpanda.geoshare.rest.CreateUserAsyncTask;
 import com.logicalpanda.geoshare.rest.RetrieveUserAsyncTask;
 
 public class StartupActivity extends AppCompatActivity implements IHandleAsyncTaskPostExecute {
@@ -56,6 +58,7 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
         //TODO: retrieve User obj from backend with this id
         //TODO: user = retrieveUser();
         //TODO: Show loading while attempting to retrieve user
+        attemptRequestPermission();
         logIn();
     }
 
@@ -85,14 +88,17 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
 
     private Boolean attemptSetNickname()
     {
-        if(!IsEmpty(Globals.getCurrentUser().getNickname()))
+        if(Globals.getCurrentUser() != null && !IsEmpty(Globals.getCurrentUser().getNickname()))
             return true;
         else {
             String text = mNickname.getText().toString();
             if (!text.isEmpty() && !text.equals("Nickname")) {
-                Globals.getCurrentUser().setNickname(text);
-                logIn();
-                return true;
+                User newUser = new User();
+                newUser.setNickname(text);
+                newUser.setGoogle_instance_id(InstanceID.getInstance(this).getId());
+                Globals.setCurrentUser(newUser);
+                new CreateUserAsyncTask(this).execute();
+                return false;
             }
         }
         return false;
@@ -147,11 +153,27 @@ public class StartupActivity extends AppCompatActivity implements IHandleAsyncTa
 
         if(taskType == AsyncTaskType.RetrieveUser) {
             mProgressBar.setVisibility(View.INVISIBLE);
-            if (attemptRequestPermission() && !IsEmpty(Globals.getCurrentUser().getNickname())) {
-                startMap();
-            } else if (IsEmpty(Globals.getCurrentUser().getNickname())) {
+            if(Globals.getCurrentUser() == null)
+            {
                 mNickname.setVisibility(View.VISIBLE);
                 mStartButton.setVisibility(View.VISIBLE);
+            }
+            else if (attemptRequestPermission()) {
+                startMap();
+            }
+        }
+
+        if(taskType == AsyncTaskType.CreateUser) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            if(Globals.getCurrentUser() == null)
+            {
+                mNickname.setVisibility(View.VISIBLE);
+                mStartButton.setVisibility(View.VISIBLE);
+                mNickname.setHint("Nickname taken. Choose another");
+                mNickname.setText("");
+            }
+            else if (attemptRequestPermission()) {
+                startMap();
             }
         }
     }

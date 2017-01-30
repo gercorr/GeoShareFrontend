@@ -5,5 +5,5 @@ package com.logicalpanda.geoshare.enums;
  */
 
 public enum AsyncTaskType {
-    TestNotes,RetrieveUser
+    TestNotes,RetrieveUser,CreateUser
 }

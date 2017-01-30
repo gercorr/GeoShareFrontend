@@ -14,14 +14,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-public class RetrieveUserAsyncTask extends AsyncTask<String, Void, User> {
+public class CreateUserAsyncTask extends AsyncTask<String, Void, User> {
 
-    public final AsyncTaskType taskType = AsyncTaskType.RetrieveUser;
+    public final AsyncTaskType taskType = AsyncTaskType.CreateUser;
 
     private Exception exception;
     private IHandleAsyncTaskPostExecute mCallingActivity;
 
-    public RetrieveUserAsyncTask(IHandleAsyncTaskPostExecute callingActivity)
+    public CreateUserAsyncTask(IHandleAsyncTaskPostExecute callingActivity)
     {
         mCallingActivity = callingActivity;
     }
@@ -29,7 +29,7 @@ public class RetrieveUserAsyncTask extends AsyncTask<String, Void, User> {
     protected User doInBackground(String... urls) {
         try {
 
-            final String url = Config.restUrl + "rest/retrieveUser/";
+            final String url = Config.restUrl + "rest/createUser/";
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
