@@ -287,7 +287,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentZoom = zoom;
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(lastLatLng)             // Sets the center of the map to current location
-                .bearing(bearing) // Sets the orientation of the camera to east
+                //.bearing(bearing) // Sets the orientation of the camera to east
                 .zoom(currentZoom)
                 .tilt(tilt)                   // Sets the tilt of the camera to 0 degrees
                 .build();                   // Creates a CameraPosition from the builder
