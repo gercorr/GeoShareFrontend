@@ -123,6 +123,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onResume(){
+        if(Globals.getCurrentUser() == null || Globals.getCurrentUser().getGoogle_instance_id() == null || Globals.getCurrentUser().getGoogle_instance_id() == "")
+        {
+            //user not setup (or lost) start from the beginning
+            Intent intent = new Intent(this, StartupActivity.class);
+            startActivity(intent);
+        }
         super.onResume();
         Globals.setCurrentFilteredNickname(null);
         logIn();
