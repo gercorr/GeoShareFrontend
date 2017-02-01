@@ -33,7 +33,7 @@ public class RetrieveNotesAsyncTask extends AsyncTask<String, Void, Note[]> {
         this.mMap = gmap;
         notes = mAllCurrentNotes;
         notesRequest = new NotesRequest();
-        notesRequest.setDistance(0.2);
+        notesRequest.setDistance(Double.parseDouble(Config.distanceToRetrieve));
         notesRequest.setLatitude(currentLatLang.latitude);
         notesRequest.setLongitude(currentLatLang.longitude);
         notesRequest.setNickname(nickname);

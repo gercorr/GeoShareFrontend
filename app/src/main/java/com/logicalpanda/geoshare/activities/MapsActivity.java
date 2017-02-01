@@ -322,7 +322,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(lastSearchLatLng == null || lastLatLng == null)
                 return true;
 
-            double distanceToRefresh = Double.parseDouble(Config.distanceToRetrieve)/2; //it it halved to get the distanceToRefresh. It will then refrest to the full distance
+            double distanceToRefresh = Double.parseDouble(Config.distanceToRetrieve)/4; //it it halved to get the distanceToRefresh. It will then refrest to the full distance
 
             //getting weird issues with double comparison after decimal places so just multiplied by 1000
             double lastSearchLat = lastSearchLatLng.latitude *1000;
