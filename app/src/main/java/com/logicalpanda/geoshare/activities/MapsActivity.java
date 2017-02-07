@@ -283,12 +283,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setCameraPosition(Location location, float zoom)
     {
-        LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng newLatLng = new LatLng(0,0);
+        if(location != null) {
+            newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        }
         lastLatLng = newLatLng;
-
-        float bearing = 0;
-        if(location.hasBearing())
-            bearing = location.getBearing();
 
         currentZoom = zoom;
         CameraPosition cameraPosition = new CameraPosition.Builder()
